@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Honey &amp; Herbal Mixer Lab — jvhny.fun</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="lab-container">
+    <header class="lab-header">
+      <span class="badge">JAVAHONEY PLAYGROUND</span>
+      <h1>Honey &amp; Herbal Mixer Lab</h1>
+      <p>Racik kombinasi madu &amp; herbal harian lo, lihat efeknya, lalu klaim racikan favorit lo.</p>
+    </header>
+
+    <section class="mixer-grid">
+      <!-- Kolom 1: Daftar Bahan -->
+      <div class="panel ingredients-panel">
+        <h3>1. Pilih Bahan</h3>
+        <div id="ingredients-list"></div>
+      </div>
+
+      <!-- Kolom 2: Visual Gelas -->
+      <div class="panel glass-panel">
+        <h3>2. Gelas Racikan</h3>
+        <div class="glass-cup" id="glass-cup">
+          <div class="liquid" id="liquid-fill"></div>
+        </div>
+        <div class="selected-tags" id="selected-ingredients">Belum ada bahan di gelas.</div>
+        <button type="button" id="reset-btn" class="btn-secondary">Kosongkan Gelas</button>
+      </div>
+
+      <!-- Kolom 3: Hasil & Lead Magnet -->
+      <div class="panel result-panel" id="result-card">
+        <h3>3. Hasil Racikan</h3>
+        <h2>Mulai racik minuman lo</h2>
+        <p>Pilih minimal <strong>2 bahan</strong> (misal <em>Raw Honey + Lemon</em>) buat lihat kombinasi &amp; rekomendasinya.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

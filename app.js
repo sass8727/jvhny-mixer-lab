@@ -90,11 +90,11 @@ function getLiquidColor(items) {
   const hasLemon = items.some((s) => s.id === "lemon");
   const hasMint = items.some((s) => s.id === "mint");
 
-  if (hasAcacia && hasHoney) return "#92400e"; // Amber madu pekat hangat
-  if (hasAcacia) return "#78350f"; // Coklat madu akasia hangat
-  if (hasHoney && hasLemon && hasMint) return "#eab308"; // Kuning segar citrus-mint
-  if (hasHoney && hasLemon) return "#fbbf24"; // Kuning keemasan lemon honey
-  if (hasHoney) return "#f59e0b"; // Kuning keemasan raw honey
+  if (hasAcacia && hasHoney) return "#92400e";
+  if (hasAcacia) return "#78350f";
+  if (hasHoney && hasLemon && hasMint) return "#eab308";
+  if (hasHoney && hasLemon) return "#fbbf24";
+  if (hasHoney) return "#f59e0b";
 
   return items[items.length - 1].color;
 }
@@ -172,7 +172,7 @@ function updateUI() {
     resultEl.innerHTML = `
       <h3>3. Hasil Racikan</h3>
       <h2>Mulai racik minuman lo</h2>
-      <p>Pilih minimal <strong>2 bahan</strong> (misal <em>Raw Honey + Lemon Segar</em>) buat lihat hasil racikannya.</p>
+      <p>Pilih minimal <strong>2 bahan</strong> (misal <em>Raw Honey + Lemon</em>) buat lihat kombinasi &amp; rekomendasinya.</p>
     `;
     return;
   }

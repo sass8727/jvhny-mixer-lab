@@ -2,9 +2,9 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0KrJuzpV-9_0cUk7EE
 
 const INGREDIENTS = [
   { id: "honey", name: "Raw Honey", color: "#f59e0b" },
-  { id: "acacia", name: "Acacia Black Honey", color: "#451a03" },
+  { id: "acacia", name: "Acacia Black Honey", color: "#92400e" },
   { id: "lemon", name: "Lemon Segar", color: "#eab308" },
-  { id: "cinnamon", name: "Kayu Manis", color: "#92400e" },
+  { id: "cinnamon", name: "Kayu Manis", color: "#b45309" },
   { id: "ginger", name: "Jahe Hangat", color: "#d97706" },
   { id: "mint", name: "Daun Mint", color: "#10b981" }
 ];
@@ -82,6 +82,23 @@ function findMatchingRecipe(ids) {
   return RECIPES.find((r) => [...r.keys].sort().join(",") === sortedUser);
 }
 
+function getLiquidColor(items) {
+  if (!items || items.length === 0) return "#f59e0b";
+
+  const hasHoney = items.some((s) => s.id === "honey");
+  const hasAcacia = items.some((s) => s.id === "acacia");
+  const hasLemon = items.some((s) => s.id === "lemon");
+  const hasMint = items.some((s) => s.id === "mint");
+
+  if (hasAcacia && hasHoney) return "#92400e"; // Amber madu pekat hangat
+  if (hasAcacia) return "#78350f"; // Coklat madu akasia hangat
+  if (hasHoney && hasLemon && hasMint) return "#eab308"; // Kuning segar citrus-mint
+  if (hasHoney && hasLemon) return "#fbbf24"; // Kuning keemasan lemon honey
+  if (hasHoney) return "#f59e0b"; // Kuning keemasan raw honey
+
+  return items[items.length - 1].color;
+}
+
 function bindLeadForm(recipeTitle, ingredientsText) {
   const form = document.getElementById("lead-form");
   const submitBtn = document.getElementById("lead-submit-btn");
@@ -134,13 +151,13 @@ function bindLeadForm(recipeTitle, ingredientsText) {
 
 function renderLeadFormHTML(recipeTitle, ingNames) {
   return `
-    <form id="lead-form" style="margin-top:16px; padding-top:14px; border-top:1px dashed #e5d2b0;">
-      <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Simpan &amp; Klaim Info Promo Racikan Ini:</p>
-      <input id="lead-name" type="text" placeholder="Nama lo" required style="width:100%; padding:8px 10px; margin-bottom:8px; border:1px solid #d6c3a5; border-radius:8px;" />
-      <input id="lead-wa" type="tel" placeholder="No. WhatsApp (cth: 0812...)" required style="width:100%; padding:8px 10px; margin-bottom:8px; border:1px solid #d6c3a5; border-radius:8px;" />
-      <button id="lead-submit-btn" type="submit" class="btn-secondary" style="width:100%;">Simpan &amp; Klaim via WA</button>
-      <div id="lead-status" style="font-size:0.82rem; margin-top:8px; color:#5c4632;"></div>
-      <a id="wa-lead-btn" class="btn-primary" style="display:none; background:#15803d; margin-top:8px; text-align:center;" target="_blank" rel="noopener">Lanjut ke WhatsApp Javahoney</a>
+    <form id="lead-form" class="lead-form">
+      <p class="lead-title">Simpan &amp; Klaim Info Promo Racikan Ini:</p>
+      <input id="lead-name" type="text" placeholder="Nama lo" required />
+      <input id="lead-wa" type="tel" placeholder="No. WhatsApp (cth: 0812...)" required />
+      <button id="lead-submit-btn" type="submit" class="btn-secondary">Simpan &amp; Klaim via WA</button>
+      <div id="lead-status" class="lead-status"></div>
+      <a id="wa-lead-btn" class="btn-primary btn-wa" style="display:none;" target="_blank" rel="noopener">Lanjut ke WhatsApp Javahoney</a>
     </form>
   `;
 }
@@ -151,6 +168,7 @@ function updateUI() {
   if (selected.length === 0) {
     selectedEl.textContent = "Belum ada bahan di gelas.";
     liquidEl.style.height = "0%";
+    liquidEl.style.background = "transparent";
     resultEl.innerHTML = `
       <h3>3. Hasil Racikan</h3>
       <h2>Mulai racik minuman lo</h2>
@@ -163,8 +181,10 @@ function updateUI() {
   selectedEl.textContent = "Isi gelas: " + ingNames;
 
   const heightPct = Math.min(selected.length * 24, 92);
+  const liquidColor = getLiquidColor(selected);
+
   liquidEl.style.height = `${heightPct}%`;
-  liquidEl.style.backgroundColor = selected[selected.length - 1].color;
+  liquidEl.style.background = liquidColor;
 
   const ids = selected.map((s) => s.id);
   const match = findMatchingRecipe(ids);
@@ -175,9 +195,9 @@ function updateUI() {
       <span class="recipe-tag">${match.tag}</span>
       <h2>${match.title}</h2>
       <p>${match.desc}</p>
-      <p style="background:#fffbeb; padding:10px; border-radius:10px; font-size:0.88rem; border:1px solid #fde68a;">
+      <div class="ratio-box">
         <strong>Takaran Saji:</strong> ${match.ratio}
-      </p>
+      </div>
       <a class="btn-primary" href="${match.url}" target="_blank" rel="noopener">${match.ctaText}</a>
       ${renderLeadFormHTML(match.title, ingNames)}
     `;

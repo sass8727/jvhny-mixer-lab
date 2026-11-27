@@ -51,10 +51,108 @@ const RECIPES = [
 let selected = [];
 
 const ingredientsEl = document.getElementById("ingredients-list");
+const glassCupEl = document.getElementById("glass-cup");
 const liquidEl = document.getElementById("liquid-fill");
 const selectedEl = document.getElementById("selected-ingredients");
 const resultEl = document.getElementById("result-card");
 const resetBtn = document.getElementById("reset-btn");
+
+function ensureVisualLayer() {
+  let layer = document.getElementById("topping-layer");
+  if (!layer && glassCupEl) {
+    layer = document.createElement("div");
+    layer.id = "topping-layer";
+    layer.className = "topping-layer";
+    glassCupEl.appendChild(layer);
+  }
+  return layer;
+}
+
+function renderToppingVisuals(items) {
+  const layer = ensureVisualLayer();
+  if (!layer) return;
+
+  layer.innerHTML = "";
+  if (!items || items.length === 0) return;
+
+  const hasLemon = items.some((s) => s.id === "lemon");
+  const hasCinnamon = items.some((s) => s.id === "cinnamon");
+  const hasMint = items.some((s) => s.id === "mint");
+  const hasGinger = items.some((s) => s.id === "ginger");
+
+  // 1. Potongan lemon melayang di permukaan/isi gelas
+  if (hasLemon) {
+    const lemonPositions = [
+      { left: "14%", bottom: "26%", rot: "-18deg", size: 28 },
+      { left: "56%", bottom: "42%", rot: "22deg", size: 24 }
+    ];
+    lemonPositions.forEach((pos) => {
+      const slice = document.createElement("div");
+      slice.className = "lemon-slice";
+      slice.style.left = pos.left;
+      slice.style.bottom = pos.bottom;
+      slice.style.width = `${pos.size}px`;
+      slice.style.height = `${pos.size}px`;
+      slice.style.transform = `rotate(${pos.rot})`;
+      layer.appendChild(slice);
+    });
+  }
+
+  // 2. Efek agak keruh + butiran bubuk kayu manis
+  if (hasCinnamon) {
+    const haze = document.createElement("div");
+    haze.className = "cinnamon-haze";
+    layer.appendChild(haze);
+
+    const specks = [
+      { left: "18%", bottom: "14%", s: 3 },
+      { left: "28%", bottom: "32%", s: 4 },
+      { left: "38%", bottom: "20%", s: 2.5 },
+      { left: "48%", bottom: "46%", s: 3.5 },
+      { left: "60%", bottom: "24%", s: 3 },
+      { left: "72%", bottom: "38%", s: 4 },
+      { left: "80%", bottom: "16%", s: 2.5 },
+      { left: "44%", bottom: "10%", s: 3.5 },
+      { left: "66%", bottom: "54%", s: 3 },
+      { left: "24%", bottom: "50%", s: 2.5 }
+    ];
+    specks.forEach((sp) => {
+      const dot = document.createElement("span");
+      dot.className = "cinnamon-speck";
+      dot.style.left = sp.left;
+      dot.style.bottom = sp.bottom;
+      dot.style.width = `${sp.s}px`;
+      dot.style.height = `${sp.s}px`;
+      layer.appendChild(dot);
+    });
+  }
+
+  // 3. Irisan jahe hangat
+  if (hasGinger) {
+    const ginger = document.createElement("div");
+    ginger.className = "ginger-slice";
+    ginger.style.left = "22%";
+    ginger.style.bottom = "12%";
+    ginger.style.transform = "rotate(12deg)";
+    layer.appendChild(ginger);
+  }
+
+  // 4. Daun mint segar
+  if (hasMint) {
+    const leaves = [
+      { left: "58%", bottom: "18%", rot: "28deg" },
+      { left: "20%", bottom: "38%", rot: "-32deg" }
+    ];
+    leaves.forEach((lv) => {
+      const leaf = document.createElement("div");
+      leaf.className = "mint-leaf";
+      leaf.style.left = lv.left;
+      leaf.style.bottom = lv.bottom;
+      leaf.style.transform = `rotate(${lv.rot})`;
+      layer.appendChild(leaf);
+    });
+  }
+}
 
 function renderIngredients() {
   ingredientsEl.innerHTML = "";
@@ -87,9 +185,12 @@ function getLiquidColor(items) {
 
   const hasHoney = items.some((s) => s.id === "honey");
   const hasAcacia = items.some((s) => s.id === "acacia");
+  const hasCinnamon = items.some((s) => s.id === "cinnamon");
   const hasLemon = items.some((s) => s.id === "lemon");
   const hasMint = items.some((s) => s.id === "mint");
 
+  if (hasCinnamon && hasAcacia) return "#6b3716";
+  if (hasCinnamon) return "#b97329"; // Lebih keruh & hangat untuk kayu manis
   if (hasAcacia && hasHoney) return "#92400e";
   if (hasAcacia) return "#78350f";
   if (hasHoney && hasLemon && hasMint) return "#eab308";
@@ -169,6 +270,7 @@ function updateUI() {
     selectedEl.textContent = "Belum ada bahan di gelas.";
     liquidEl.style.height = "0%";
     liquidEl.style.background = "transparent";
+    renderToppingVisuals([]);
     resultEl.innerHTML = `
       <h3>3. Hasil Racikan</h3>
       <h2>Mulai racik minuman lo</h2>
@@ -185,6 +287,7 @@ function updateUI() {
 
   liquidEl.style.height = `${heightPct}%`;
   liquidEl.style.background = liquidColor;
+  renderToppingVisuals(selected);
 
   const ids = selected.map((s) => s.id);
   const match = findMatchingRecipe(ids);

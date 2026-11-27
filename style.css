@@ -1,0 +1,185 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #fdf7ea 0%, #f7ebd2 100%);
+  color: #261d14;
+  min-height: 100vh;
+}
+
+.lab-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 28px 18px 48px;
+}
+
+.lab-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.badge {
+  display: inline-block;
+  background: #fde68a;
+  color: #78350f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.lab-header h1 {
+  margin: 6px 0;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  color: #3b230d;
+}
+
+.lab-header p {
+  margin: 0 auto;
+  max-width: 600px;
+  color: #5c4632;
+}
+
+.mixer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #ead7b3;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(92, 62, 24, 0.06);
+}
+
+.panel h3 {
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8c5a2b;
+}
+
+.ingredient-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 11px 14px;
+  margin-bottom: 10px;
+  border: 1px solid #e6cfa2;
+  border-radius: 12px;
+  background: #fffdf8;
+  color: #2b1e12;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.ingredient-btn:hover:not(:disabled) {
+  background: #fef3c7;
+  border-color: #d97706;
+  transform: translateY(-1px);
+}
+
+.ingredient-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.glass-panel {
+  text-align: center;
+}
+
+.glass-cup {
+  position: relative;
+  width: 150px;
+  height: 205px;
+  margin: 12px auto 16px;
+  border: 4px solid #4a3520;
+  border-top: none;
+  border-radius: 0 0 32px 32px;
+  background: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+  box-shadow: inset 0 -6px 14px rgba(0, 0, 0, 0.06);
+}
+
+.liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background-color: #f59e0b;
+  transition: height 0.4s ease, background-color 0.4s ease;
+}
+
+.selected-tags {
+  min-height: 40px;
+  font-size: 0.9rem;
+  color: #4a3520;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.result-panel h2 {
+  margin: 6px 0 10px;
+  font-size: 1.35rem;
+  color: #2b1e12;
+}
+
+.result-panel p {
+  margin: 0 0 14px;
+  color: #4f3d2c;
+  line-height: 1.5;
+}
+
+.recipe-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.btn-primary {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 11px 16px;
+  background: #d97706;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #b45309;
+}
+
+.btn-secondary {
+  padding: 9px 14px;
+  border: 1px solid #d6c3a5;
+  border-radius: 10px;
+  background: #faf5eb;
+  color: #4a3520;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #efe5d1;
+}

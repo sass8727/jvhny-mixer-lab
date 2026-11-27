@@ -127,6 +127,61 @@ body {
   background: #f59e0b;
   transition: height 0.35s ease, background 0.35s ease;
   box-shadow: none;
+  z-index: 1;
+}
+
+.topping-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Potongan lemon */
+.lemon-slice {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fef9c3 18%, #facc15 22%, #eab308 82%, #ca8a04 100%);
+  border: 2px solid #fef08a;
+  box-shadow: 0 2px 5px rgba(44, 30, 18, 0.2);
+}
+
+/* Efek agak keruh + bubuk kayu manis */
+.cinnamon-haze {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  background: rgba(255, 247, 237, 0.28);
+  backdrop-filter: blur(0.6px);
+}
+
+.cinnamon-speck {
+  position: absolute;
+  border-radius: 50%;
+  background: #6b3410;
+  opacity: 0.85;
+}
+
+/* Irisan jahe */
+.ginger-slice {
+  position: absolute;
+  width: 26px;
+  height: 18px;
+  border-radius: 45% 55% 48% 52%;
+  background: #eab308;
+  border: 2px solid #c27803;
+}
+
+/* Daun mint */
+.mint-leaf {
+  position: absolute;
+  width: 22px;
+  height: 12px;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  border: 1px solid #14532d;
 }
 
 .selected-tags {

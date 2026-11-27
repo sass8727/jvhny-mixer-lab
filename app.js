@@ -1,3 +1,5 @@
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0KrJuzpV-9_0cUk7EEiPD7u50taudkd1qg4RMYl76peK6X1nmQ4nUe4RuHedKKDpf/exec";
+
 const INGREDIENTS = [
   { id: "honey", name: "Raw Honey", color: "#f59e0b" },
   { id: "acacia", name: "Acacia Black Honey", color: "#451a03" },
@@ -82,26 +84,65 @@ function findMatchingRecipe(ids) {
 
 function bindLeadForm(recipeTitle, ingredientsText) {
   const form = document.getElementById("lead-form");
+  const submitBtn = document.getElementById("lead-submit-btn");
   const statusEl = document.getElementById("lead-status");
   if (!form) return;
 
-  form.onsubmit = (e) => {
+  form.onsubmit = async (e) => {
     e.preventDefault();
     const nama = document.getElementById("lead-name").value.trim();
     const wa = document.getElementById("lead-wa").value.trim();
 
     if (!nama || !wa) return;
 
-    const pesan = encodeURIComponent(
-      `Halo Javahoney, gua ${nama} (${wa}). Barusan nyoba racikan "${recipeTitle}" (${ingredientsText}) di jvhny.fun. Kirimin panduan resep & info promonya ya!`
-    );
-    statusEl.innerHTML = `Siap <strong>${nama}</strong>! Klik tombol di bawah buat kirim catatan racikan ke WA Javahoney.`;
-    const waBtn = document.getElementById("wa-lead-btn");
-    if (waBtn) {
-      waBtn.href = `https://wa.me/6282252345650?text=${pesan}`;
-      waBtn.style.display = "inline-block";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Menyimpan...";
+    statusEl.textContent = "";
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          nama: nama,
+          wa: wa,
+          racikan: `${recipeTitle} (${ingredientsText})`
+        })
+      });
+
+      const pesan = encodeURIComponent(
+        `Halo Javahoney, gua ${nama} (${wa}). Barusan nyoba racikan "${recipeTitle}" (${ingredientsText}) di jvhny.fun. Kirimin panduan resep & info promonya ya!`
+      );
+
+      statusEl.innerHTML = `Berhasil disimpan, <strong>${nama}</strong>! Klik tombol di bawah buat langsung chat ke WA Javahoney:`;
+      const waBtn = document.getElementById("wa-lead-btn");
+      if (waBtn) {
+        waBtn.href = `https://wa.me/6282252345650?text=${pesan}`;
+        waBtn.style.display = "block";
+      }
+      submitBtn.textContent = "Tersimpan ✓";
+    } catch (err) {
+      statusEl.textContent = "Gagal nyimpen otomatis, tapi lo tetap bisa langsung lanjut ke WA di bawah:";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Coba Lagi";
     }
   };
+}
+
+function renderLeadFormHTML(recipeTitle, ingNames) {
+  return `
+    <form id="lead-form" style="margin-top:16px; padding-top:14px; border-top:1px dashed #e5d2b0;">
+      <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Simpan &amp; Klaim Info Promo Racikan Ini:</p>
+      <input id="lead-name" type="text" placeholder="Nama lo" required style="width:100%; padding:8px 10px; margin-bottom:8px; border:1px solid #d6c3a5; border-radius:8px;" />
+      <input id="lead-wa" type="tel" placeholder="No. WhatsApp (cth: 0812...)" required style="width:100%; padding:8px 10px; margin-bottom:8px; border:1px solid #d6c3a5; border-radius:8px;" />
+      <button id="lead-submit-btn" type="submit" class="btn-secondary" style="width:100%;">Simpan &amp; Klaim via WA</button>
+      <div id="lead-status" style="font-size:0.82rem; margin-top:8px; color:#5c4632;"></div>
+      <a id="wa-lead-btn" class="btn-primary" style="display:none; background:#15803d; margin-top:8px; text-align:center;" target="_blank" rel="noopener">Lanjut ke WhatsApp Javahoney</a>
+    </form>
+  `;
 }
 
 function updateUI() {
@@ -138,25 +179,20 @@ function updateUI() {
         <strong>Takaran Saji:</strong> ${match.ratio}
       </p>
       <a class="btn-primary" href="${match.url}" target="_blank" rel="noopener">${match.ctaText}</a>
-
-      <form id="lead-form" style="margin-top:16px; padding-top:14px; border-top:1px dashed #e5d2b0;">
-        <p style="font-size:0.85rem; font-weight:700; margin-bottom:8px;">Simpan &amp; Klaim Info Promo Racikan Ini:</p>
-        <input id="lead-name" type="text" placeholder="Nama lo" required style="width:100%; padding:8px 10px; margin-bottom:8px; border:1px solid #d6c3a5; border-radius:8px;" />
-        <input id="lead-wa" type="tel" placeholder="No. WhatsApp (cth: 0812...)" required style="width:100%; padding:8px 10px; margin-bottom:8px; border:1px solid #d6c3a5; border-radius:8px;" />
-        <button type="submit" class="btn-secondary" style="width:100%;">Siapkan Pesan Klaim</button>
-        <div id="lead-status" style="font-size:0.82rem; margin-top:8px; color:#5c4632;"></div>
-        <a id="wa-lead-btn" class="btn-primary" style="display:none; background:#15803d; margin-top:8px; text-align:center;" target="_blank" rel="noopener">Kirim ke WhatsApp Javahoney</a>
-      </form>
+      ${renderLeadFormHTML(match.title, ingNames)}
     `;
     bindLeadForm(match.title, ingNames);
   } else if (selected.length >= 2) {
+    const customTitle = `Eksperimen ${selected.length} Bahan`;
     resultEl.innerHTML = `
       <h3>3. Hasil Racikan</h3>
       <span class="recipe-tag">CUSTOM MIX</span>
-      <h2>Eksperimen ${selected.length} Bahan</h2>
-      <p>Kombinasi ini belum masuk resep signature—coba <strong>Raw Honey + Lemon Segar</strong>, <strong>Raw Honey + Kayu Manis</strong>, atau <strong>Acacia Black Honey + Jahe Hangat</strong>.</p>
+      <h2>${customTitle}</h2>
+      <p>Kombinasi unik! Mau dicatat atau dikonsultasikan takarannya ke tim Javahoney? Isi form di bawah atau cek katalog madu kami.</p>
       <a class="btn-primary" href="https://javahoney.id/?utm_source=jvhny.fun&utm_medium=mixer&utm_campaign=custom_mix" target="_blank" rel="noopener">Belanja Madu di Javahoney.id</a>
+      ${renderLeadFormHTML(customTitle, ingNames)}
     `;
+    bindLeadForm(customTitle, ingNames);
   } else {
     resultEl.innerHTML = `
       <h3>3. Hasil Racikan</h3>
